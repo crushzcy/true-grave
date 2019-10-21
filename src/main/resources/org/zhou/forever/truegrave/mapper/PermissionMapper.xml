@@ -79,4 +79,10 @@
     select permission_id, name, pid, parent_name, type, url, code, color, icon, sort
     from t_permission
   </select>
+  <select id="selectPermissionsById" resultType="java.lang.String">
+    select permission.name from t_role_permission role_permission
+    left join t_permission permission
+    on role_permission.permission_id = permission.permission_id
+    where role_permission.role_id = #{roleId}
+  </select>
 </mapper>

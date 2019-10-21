@@ -61,4 +61,9 @@
     select role_id, name, descr
     from t_role
   </select>
+  <select id="selectByName" resultMap="BaseResultMap">
+    select role_id, name, descr
+    from t_role
+    where role_name = #{roleName}
+  </select>
 </mapper>

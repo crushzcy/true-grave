@@ -17,6 +17,19 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
+  
+  <sql id="table_columns">
+    user_id,
+    user_name,
+    password,
+    email,
+    phone,
+    salt,
+    status,
+    create_time,
+    update_time
+  </sql>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     <!--
       WARNING - @mbggenerated
@@ -77,4 +90,19 @@
     select user_id, user_name, password, email, phone, salt, status, create_time, update_time
     from t_user
   </select>
+  <select id="selectByName" parameterType="string" resultMap="BaseResultMap">
+    select
+    <include refid="table_columns"></include>
+    from t_user
+    where user_name = #{username}
+  </select>
+  <select id="selectRolesById" resultType="java.lang.String">
+    select role.role_name
+    from t_user_role user_role
+    left join t_role role
+    on user_role.role_id = role.role_id
+    where user_role.user_id  = #{userId}
+  </select>
+
+
 </mapper>

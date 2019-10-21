@@ -59,7 +59,7 @@ public class ShiroConfig {
         // 用户，需要角色权限 "user"
         filterChainDefinitionMap.put("/user/**", "roles[user]");
         // 管理员，需要角色权限 "admin"
-        filterChainDefinitionMap.put("/admin/**", "role[admin]");
+        filterChainDefinitionMap.put("/admin/**", "roles[admin]");
         // 开放登录接口
         filterChainDefinitionMap.put("/login", "anon");
         // 其余接口一律拦截

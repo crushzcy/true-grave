@@ -28,6 +28,7 @@ public class HomeController {
         return "login";
     }
 
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(HttpServletRequest request, User user, Model model) {
         if (StringUtils.isEmpty(user.getUserName()) || StringUtils.isEmpty(user.getPassword())){
             request.setAttribute("msg", "用户名或者密码不不能为空！");

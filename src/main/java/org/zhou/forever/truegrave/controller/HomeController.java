@@ -5,14 +5,18 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zhou.forever.truegrave.domain.User;
+import org.zhou.forever.truegrave.service.IUserService;
+import org.zhou.forever.truegrave.util.PasswordHelper;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * @ClassName HomeController
@@ -23,22 +27,27 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class HomeController {
 
+    @Autowired
+    IUserService userService;
+
     @RequestMapping(value="/login", method= RequestMethod.GET)
     public String login() {
         return "login";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(HttpServletRequest request, User user, Model model) {
-        if (StringUtils.isEmpty(user.getUserName()) || StringUtils.isEmpty(user.getPassword())){
+    public String login(HttpServletRequest request, Model model) {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
             request.setAttribute("msg", "用户名或者密码不不能为空！");
             return "login";
         }
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(user.getUserName(), user.getPassword());
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         try {
             subject.login(token);
-            return "redirect:usersPage";
+            return "redirect:grave";
         } catch (LockedAccountException lae) {
             token.clear();
             request.setAttribute("msg", "用户已经被锁定不能登录, 请与管理员联系！");
@@ -50,9 +59,38 @@ public class HomeController {
         }
     }
 
+    @RequestMapping(value = "/signin", method = RequestMethod.POST)
+    public String signin(HttpServletRequest request, Model model) {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
+            request.setAttribute("msg", "用户名或者密码不不能为空！");
+            return "login";
+        }
+
+        User u = userService.findUserByName(username);
+        if(u != null) {
+            return "error";
+        }
+        User user = new User();
+        user.setUserName(username);
+        user.setPassword(password);
+        PasswordHelper.encryptPassword(user);
+        user.setStatus(true);
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
+        userService.insertUser(user);
+        return "redirect:login";
+    }
+
     @RequestMapping("/usersPage")
     public String usersPage() {
         return "user/users";
+    }
+
+    @RequestMapping(value={"/grave",""})
+    public String grave() {
+        return "grave";
     }
 
     @RequestMapping("/rolesPage")

@@ -28,7 +28,7 @@ public class ShiroConfig {
 
         credentialsMatcher.setHashAlgorithmName("MD5");
         // 加密次数
-        credentialsMatcher.setHashIterations(1024);
+        credentialsMatcher.setHashIterations(2);
         credentialsMatcher.setStoredCredentialsHexEncoded(true);
         return credentialsMatcher;
     }
@@ -48,7 +48,7 @@ public class ShiroConfig {
         // 必须设置SecurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // setLoginUrl 如果不设置值，默认会寻找Web工程共目录下的"/login.jsp"页面 或 "/login"映射
-        shiroFilterFactoryBean.setLoginUrl("/notLogin");
+        shiroFilterFactoryBean.setLoginUrl("/login");
 
         shiroFilterFactoryBean.setUnauthorizedUrl("/notRole");
 
@@ -62,6 +62,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/admin/**", "roles[admin]");
         // 开放登录接口
         filterChainDefinitionMap.put("/login", "anon");
+        // 开放注册接口
+        filterChainDefinitionMap.put("/signin", "anon");
+        // 开放grave接口
+        filterChainDefinitionMap.put("/grave", "anon");
         // 资源文件
         filterChainDefinitionMap.put("/css/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");

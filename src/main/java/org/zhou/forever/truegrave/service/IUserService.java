@@ -20,4 +20,6 @@ public interface IUserService {
 
     Set<String> findRolesById(Integer userId);
 
+    int insertUser(User user);
+
 }

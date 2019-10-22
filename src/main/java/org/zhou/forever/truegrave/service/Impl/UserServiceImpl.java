@@ -2,7 +2,6 @@ package org.zhou.forever.truegrave.service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.zhou.forever.truegrave.domain.Role;
 import org.zhou.forever.truegrave.domain.User;
 import org.zhou.forever.truegrave.mapper.UserMapper;
 import org.zhou.forever.truegrave.service.IUserService;
@@ -29,5 +28,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Set<String> findRolesById(Integer userId) {
         return userMapper.selectRolesById(userId);
+    }
+
+    @Override
+    public int insertUser(User user) {
+        return userMapper.insert(user);
     }
 }

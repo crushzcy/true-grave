@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="#" />
     <link type="text/css" rel="styleSheet" th:href="@{/css/login.css}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>账号登录</title>
-
 </head>
+
 
 <body>
 <div id="bg">
@@ -23,9 +23,9 @@
                 <i style="right: 5px">in</i>
             </div>
             <span>
-                    <form action="post">
-                        <p class="form"><input type="text" id="user" placeholder="username"></p>
-                        <p class="form"><input type="password" id="passwd" placeholder="password"></p>
+                    <form th:action="@{/login}" method="post" id="login_form">
+                        <p class="form"><input type="text" id="username" name="username" placeholder="username"></p>
+                        <p class="form"><input type="password" id="password" name="password" placeholder="password"></p>
                         <p class="form confirm"><input type="password" id="confirm-passwd" placeholder="confirm password"></p>
                         <input type="button" value="Log in" class="btn" onclick="login()" style="margin-right: 20px;">
                         <input type="button" value="Sign in" class="btn" onclick='signin()' id="btn">
@@ -58,48 +58,51 @@
     </div>
 </div>
 </body>
-<script type="text/javascript">
+<script>
     var onoff = true//根据此布尔值判断当前为注册状态还是登录状态
-    var confirm = document.getElementsByClassName("confirm")[0];
-    var user = document.getElementById("user");
-    var passwd = document.getElementById("passwd");
-    var con_pass = document.getElementById("confirm-passwd");
+    var confirm = document.getElementsByClassName("confirm")[0]
+    var user = document.getElementById("username")
+    var passwd = document.getElementById("password")
+    var con_pass = document.getElementById("confirm-passwd")
+    var login_form = document.getElementById("login_form");
 
     //自动居中title
-    var name_c = document.getElementById("title");
-    var name = name_c.innerHTML.split("");
+    var name_c = document.getElementById("title")
+    var name = name_c.innerHTML.split("")
     name_c.innerHTML = ""
     for (i = 0; i < name.length; i++)
         if (name[i] != ",")
-            name_c.innerHTML += "<i>" + name[i] + "</i>";
-
+            name_c.innerHTML += "<i>" + name[i] + "</i>"
     //引用hint()在最上方弹出提示
     function hint() {
-        let hit = document.getElementById("hint");
-        hit.style.display = "block";
-        setTimeout("hit.style.opacity = 1", 0);
-        setTimeout("hit.style.opacity = 0", 2000);
-        setTimeout('hit.style.display = "none"', 3000);
+        let hit = document.getElementById("hint")
+        hit.style.display = "block"
+        setTimeout("hit.style.opacity = 1", 0)
+        setTimeout("hit.style.opacity = 0", 2000)
+        setTimeout('hit.style.display = "none"', 3000)
     }
-
     //回调函数
     function submit(callback) {
-        //if (passwd.value == con_pass.value) {
-        let request = new XMLHttpRequest();
-        let url = "";
-        request.open("post", url, true);
-        let data = new FormData();
-        data.append("user", user.value);
-        data.append("passwd", passwd.value);
-        request.onreadystatechange = function () {
-            if (this.readyState == 4) {
-                callback.call(this, this.response)
-                //console.log(this.responseText)
+        if (passwd.value == con_pass.value) {
+            let request = new XMLHttpRequest()
+            let url = "/signin"
+            request.open("post", url, true)
+            let data = new FormData()
+            data.append("username", user.value)
+            data.append("password", passwd.value)
+            request.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    callback.call(this, this.response)
+                    //console.log(this.responseText)
+                }
             }
+            request.send(data)
         }
-        request.send(data)
+        else {
+           hit.innerHTML = "两次密码不同"
+           hint()
+        }
     }
-
     //注册按钮
     function signin() {
         let status = document.getElementById("status").getElementsByTagName("i")
@@ -119,7 +122,7 @@
             else if (passwd.value != con_pass.value)
                 hit.innerHTML = "两次密码不相等"
             else if (passwd.value = con_pass.value) {
-                submit(function (res) {
+                submit(function(res) {
                     if (res == "exist")
                         hit.innerHTML = "该账号已存在"
                     else if (res == true) {
@@ -137,21 +140,24 @@
     function login() {
         if (onoff) {
 
-            let request = new XMLHttpRequest()
-            let url = "/login";
-            request.open("post", url, true)
-            let data = new FormData()
-            data.append("username", user.value)
-            data.append("password", passwd.value)
-            request.onreadystatechange = function () {
-                if (this.readyState == 4) {
-                    if (this.responseText == false)
-                        hint()
-                    else
-                        window.location.href = this.responseText;
+            let hit = document.getElementById("hint").getElementsByTagName("p")[0];
+            if (onoff) {
+
+                if (typeof user.value == 'undefined' || user.value === "") {
+                    hit.innerHTML = "用户名不能为空";
+                    user.focus();
+                    hint();
+                    return false;
                 }
+                if (typeof passwd.value == 'undefined' || passwd.value === "") {
+                    hit.innerHTML = ("密码不能为空");
+                    passwd.focus();
+                    hint();
+                    return false;
+                }
+
+                login_form.submit();
             }
-            request.send(data)
         } else {
             let status = document.getElementById("status").getElementsByTagName("i")
             confirm.style.height = 0

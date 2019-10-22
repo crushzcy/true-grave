@@ -70,6 +70,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/css/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/img/**", "anon");
+        filterChainDefinitionMap.put("/font/**", "anon");
         // 其余接口一律拦截
         // 这行必须要放在所有权限的最后，不然会导致所有的url都被拦截
         filterChainDefinitionMap.put("/**", "authc");
